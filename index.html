@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tactics Board</title>
+  <meta name="description" content="A neon football tactics board — pick a formation, drag players, draw runs and passes, then share or export your lineup.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>Tactics Board</h1>
+    </div>
+    <p class="tag">Pick a shape. Drag your players. Draw the move.</p>
+  </header>
+
+  <main class="layout">
+    <aside class="panel" aria-label="Controls">
+      <section>
+        <h2>Formation</h2>
+        <div class="chips" id="formations"></div>
+      </section>
+
+      <section>
+        <h2>Tool</h2>
+        <div class="seg" role="radiogroup" aria-label="Tool">
+          <button data-tool="move" class="on" role="radio" aria-checked="true" title="Move players (M)">Move</button>
+          <button data-tool="pass" role="radio" aria-checked="false" title="Draw a pass (P)">Pass</button>
+          <button data-tool="run" role="radio" aria-checked="false" title="Draw a run (R)">Run</button>
+        </div>
+        <p class="hint" id="toolHint">Drag players to reposition. Double-click a player to rename.</p>
+      </section>
+
+      <section>
+        <h2>Board</h2>
+        <label class="toggle"><input type="checkbox" id="showOpp"> Show opponents</label>
+        <div class="row">
+          <button id="undo" title="Undo last arrow (Ctrl+Z)">Undo arrow</button>
+          <button id="clear" title="Clear all arrows">Clear arrows</button>
+        </div>
+        <div class="row">
+          <button id="reset" title="Reset players to formation">Reset shape</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lineups</h2>
+        <div class="row">
+          <input id="lineupName" placeholder="Lineup name" maxlength="40" aria-label="Lineup name">
+          <button id="save" class="primary">Save</button>
+        </div>
+        <ul id="saved" class="saved"></ul>
+      </section>
+
+      <section>
+        <h2>Share</h2>
+        <div class="row">
+          <button id="share" class="primary">Copy link</button>
+          <button id="export">Export PNG</button>
+        </div>
+      </section>
+    </aside>
+
+    <section class="stage">
+      <svg id="pitch" viewBox="0 0 680 1050" role="img" aria-label="Football pitch with players">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <marker id="headPass" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0L10 5L0 10z" fill="#00e5ff"/>
+          </marker>
+          <marker id="headRun" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0 0L10 5L0 10z" fill="#39ff88"/>
+          </marker>
+          <pattern id="stripes" width="680" height="150" patternUnits="userSpaceOnUse">
+            <rect width="680" height="75" fill="#0b2418"/>
+            <rect y="75" width="680" height="75" fill="#0d2a1c"/>
+          </pattern>
+        </defs>
+        <rect width="680" height="1050" fill="url(#stripes)"/>
+        <g class="lines">
+          <rect x="20" y="20" width="640" height="1010"/>
+          <line x1="20" y1="525" x2="660" y2="525"/>
+          <circle cx="340" cy="525" r="87"/>
+          <circle cx="340" cy="525" r="4" class="fill"/>
+          <rect x="141" y="20" width="398" height="165"/>
+          <rect x="230" y="20" width="220" height="55"/>
+          <circle cx="340" cy="130" r="4" class="fill"/>
+          <path d="M269 185a87 87 0 0 0 142 0"/>
+          <rect x="141" y="865" width="398" height="165"/>
+          <rect x="230" y="975" width="220" height="55"/>
+          <circle cx="340" cy="920" r="4" class="fill"/>
+          <path d="M269 865a87 87 0 0 1 142 0"/>
+          <rect x="300" y="8" width="80" height="12"/>
+          <rect x="300" y="1030" width="80" height="12"/>
+        </g>
+        <g id="arrows"></g>
+        <path id="preview" class="arrow" d="" />
+        <g id="opponents"></g>
+        <g id="players"></g>
+      </svg>
+      <p class="caption"><span id="shapeLabel">4-3-3</span> · <span id="arrowCount">0 arrows</span></p>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <dialog id="editDlg">
+    <form method="dialog" class="dlg">
+      <h3>Edit player</h3>
+      <label>Number <input id="editNum" type="number" min="1" max="99"></label>
+      <label>Name <input id="editName" maxlength="14"></label>
+      <menu>
+        <button value="cancel">Cancel</button>
+        <button value="ok" class="primary">Save</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <footer class="foot">Built by <a href="https://github.com/Aaravcodesss">@Aaravcodesss</a> · Vanilla HTML, CSS &amp; JS · No libraries</footer>
+
+  <script src="formations.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
